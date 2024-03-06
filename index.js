@@ -1,13 +1,8 @@
-const express = require('express')
-const bodyParser = require('body-parser')
 const { Server } = require('socket.io')
 
 const io = new Server({
   cors: true
 })
-const app = express()
-
-app.use(bodyParser.json())
 
 const emailToSocketmapping = new Map()
 const socketToEmailMapping = new Map()
@@ -39,9 +34,6 @@ io.on('connection', socket => {
   })
 })
 
-app.listen(8000, () => {
-  console.log('server started on port 8000')
-})
-io.listen(8001, () => {
+io.listen(process.env.PORT || 8000, () => {
   console.log('socket.io started on port 8001')
 })
