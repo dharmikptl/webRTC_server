@@ -21,7 +21,7 @@ io.on('connection', socket => {
     const { emailId, offer } = data
     const fromEmail = socketToEmailMapping.get(socket.id)
     const socketId = emailToSocketmapping.get(emailId)
-    socket.to(socketId).emit('incomming-call', { offer, from: fromEmail })
+    socket.to(socketId).emit('incoming-call', { offer, from: fromEmail })
   })
   socket.on('call-accepted', data => {
     const { emailId, answer } = data
@@ -31,9 +31,15 @@ io.on('connection', socket => {
   })
   socket.on('disconnect', () => {
     console.log('user disconnected')
+    const emailId = socketToEmailMapping.get(socket.id)
+    if (emailId) {
+      socket.broadcast.emit('user-disconnected', { emailId })
+      emailToSocketmapping.delete(emailId)
+      socketToEmailMapping.delete(socket.id)
+    }
   })
 })
 
 io.listen(process.env.PORT || 8000, () => {
-  console.log('socket.io started on port 8001')
+  console.log('socket.io started on port 8000')
 })
